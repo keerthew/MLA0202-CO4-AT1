@@ -1,0 +1,112 @@
+states = ["Sunny", "Cloudy", "Rainy"]
+
+observations = ["Dry", "Humid", "Wet"]
+
+
+initial_probability = {
+    "Sunny": 0.5,
+    "Cloudy": 0.3,
+    "Rainy": 0.2
+}
+
+transition_probability = {
+    "Sunny": {
+        "Sunny": 0.6,
+        "Cloudy": 0.3,
+        "Rainy": 0.1
+    },
+    "Cloudy": {
+        "Sunny": 0.2,
+        "Cloudy": 0.5,
+        "Rainy": 0.3
+    },
+    "Rainy": {
+        "Sunny": 0.1,
+        "Cloudy": 0.3,
+        "Rainy": 0.6
+    }
+}
+
+emission_probability = {
+    "Sunny": {
+        "Dry": 0.8,
+        "Humid": 0.15,
+        "Wet": 0.05
+    },
+    "Cloudy": {
+        "Dry": 0.2,
+        "Humid": 0.6,
+        "Wet": 0.2
+    },
+    "Rainy": {
+        "Dry": 0.05,
+        "Humid": 0.25,
+        "Wet": 0.7
+    }
+}
+
+
+observed = ["Dry", "Humid", "Wet", "Wet"]
+
+V = [{}]
+path = {}
+
+for state in states:
+    V[0][state] = (
+        initial_probability[state] *
+        emission_probability[state][observed[0]]
+    )
+    path[state] = [state]
+
+for t in range(1, len(observed)):
+    V.append({})
+    new_path = {}
+
+    for current_state in states:
+
+        best_probability = -1
+        best_previous_state = None
+
+        for previous_state in states:
+
+            probability = (
+                V[t - 1][previous_state]
+                * transition_probability[previous_state][current_state]
+                * emission_probability[current_state][observed[t]]
+            )
+
+            if probability > best_probability:
+                best_probability = probability
+                best_previous_state = previous_state
+
+        V[t][current_state] = best_probability
+
+        new_path[current_state] = (
+            path[best_previous_state] + [current_state]
+        )
+
+    path = new_path
+
+best_probability = -1
+best_state = None
+
+for state in states:
+    if V[-1][state] > best_probability:
+        best_probability = V[-1][state]
+        best_state = state
+
+best_path = path[best_state]
+
+print("Observed Weather:")
+print(observed)
+
+print("\nPredicted Hidden Weather States:")
+print(best_path)
+
+print("\nProbability:")
+print(round(best_probability, 6))
+
+print("\n----------------------------------------")
+print("Name : Kanchukommala Keerthana Sai")
+print("Reg No : 192425143")
+print("----------------------------------------")
