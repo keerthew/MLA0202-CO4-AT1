@@ -1,0 +1,63 @@
+from pgmpy.models import DiscreteBayesianNetwork
+from pgmpy.factors.discrete import TabularCPD
+from pgmpy.inference import VariableElimination
+
+model = DiscreteBayesianNetwork([
+    ("Obesity", "Diabetes"),
+    ("BloodSugar", "Diabetes")
+])
+
+cpd_obesity = TabularCPD(
+    variable="Obesity",
+    variable_card=2,
+    values=[[0.70],
+            [0.30]]
+)
+
+cpd_blood_sugar = TabularCPD(
+    variable="BloodSugar",
+    variable_card=2,
+    values=[[0.60],
+            [0.40]]
+)
+
+cpd_diabetes = TabularCPD(
+    variable="Diabetes",
+    variable_card=2,
+    values=[
+        [0.99, 0.60, 0.80, 0.10],
+        [0.01, 0.40, 0.20, 0.90]
+    ],
+    evidence=["Obesity", "BloodSugar"],
+    evidence_card=[2, 2]
+)
+
+model.add_cpds(
+    cpd_obesity,
+    cpd_blood_sugar,
+    cpd_diabetes
+)
+
+print("Bayesian Network Valid:", model.check_model())
+
+inference = VariableElimination(model)
+
+result = inference.query(
+    variables=["Diabetes"],
+    evidence={
+        "Obesity": 1,
+        "BloodSugar": 1
+    }
+)
+
+print("\nProbability of Diabetes:")
+print(result)
+
+print("\nPredicted Probability of Diabetes:")
+print(round(result.values[1] * 100, 2), "%")
+
+
+print("\n----------------------------------------")
+print("Name : Kanchukommala Keerthana Sai")
+print("Reg No : 192425143")
+print("----------------------------------------")
