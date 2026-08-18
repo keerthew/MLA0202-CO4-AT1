@@ -1,0 +1,46 @@
+import numpy as np
+image = np.array([
+    [100, 105, 250],
+    [102, 240, 108],
+    [98, 110, 105]
+], dtype=float)
+
+print("Original Image:")
+print(image.astype(int))
+
+updated_image = image.copy()
+
+rows, columns = image.shape
+
+
+for i in range(rows):
+    for j in range(columns):
+
+        neighbors = []
+
+        if i > 0:
+            neighbors.append(image[i - 1][j])
+
+        if i < rows - 1:
+            neighbors.append(image[i + 1][j])
+
+        if j > 0:
+            neighbors.append(image[i][j - 1])
+
+        if j < columns - 1:
+            neighbors.append(image[i][j + 1])
+
+        neighbor_average = np.mean(neighbors)
+
+        updated_image[i][j] = (
+            0.5 * image[i][j] +
+            0.5 * neighbor_average
+        )
+
+print("\nUpdated Image After One Iteration:")
+print(updated_image.astype(int))
+
+print("\n----------------------------------------")
+print("Name : Kanchukommala Keerthana Sai")
+print("Reg No : 192425143")
+print("----------------------------------------")
